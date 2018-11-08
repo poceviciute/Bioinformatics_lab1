@@ -1,0 +1,113 @@
+---
+title: "Bioinformatics Lab 1"
+author: "Milda Poceviciute"
+date: "8 november 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+## Question 2
+
+### 2.1
+
+According to the GenBank, teh protein product is named "RecQ type DNA helicase".
+
+### Loading the data
+
+In this question we created Fasta files from the protein sequence from GenBank, corresponding nucleotides sequence. As well as, the bnest prediction of the nucleotide sequence, and the inverse and complements of the both nucleotide sequences.
+
+```{r,warning=FALSE}
+#install.packages("seqinr")
+library(seqinr)
+protein_seq <- read.fasta("Fasta_file.fasta")
+EMBOSS_seq <- read.fasta("backtranseq.txt")
+True_seq <-  read.fasta("truenucleotideseq.txt")
+Reversed_True <- read.fasta("Reversed_compl.txt")
+Reversed_Emboss <- read.fasta("Reversed_compl_backtranseq.txt")
+emboss <- EMBOSS_seq$A
+real <- True_seq$`CU329670.1:1-5662`
+inv_real <- Reversed_True$`1-5662`
+inv_emboss <- Reversed_Emboss$A
+```
+
+### 2.2, 
+The first four amino acids are:
+
+```{r}
+protein_seq$`protein_id=CAC05745.1,product=RecQtypeDNAhelicase`[1:4]
+```
+
+The full names of them are: Methionine, Valine, Valine, Alanine.
+
+### 2.3, 2.4
+
+We can see that the length of the sequences do not match - the "true" nucleotide sequence from the GenBank has one additional nucleotide as the best predicted sequence by the _backtranseq_. 
+
+```{r}
+length(emboss)
+length(real)
+length(inv_real)
+length(inv_emboss)
+```
+
+Below we print out 10 first nucleotides of each sequence. We deduce that the "true" nucleotide sequence starts with an additional "g", which is omitted in the best prediction sequence:
+```{r,echo=FALSE}
+print("Predicted nucleotide seq:")
+emboss[1:10]
+print("GenBank nucleotide seq:")
+real[1:10]
+print("Inverse and complement of GenBank nucleotide seq:")
+inv_real[1:10]
+print("Inverse and complement of predicted nucleotide seq:")
+inv_emboss[1:10]
+```
+
+Below we compare the sequences, and find the percentage of the matching nucleotides:
+
+```{r,echo=FALSE}
+print("Comparison of the Predicted and GenBank nucleotide seq:")
+(length(which(emboss == real[-1]))/length(real[-1])) *100
+print("Comparison of the Predicted and inverse&complement of GenBank nucleotide seq:")
+(length(which(emboss == inv_real[-5662]))/length(real[-5662])) *100
+print("Comparison of the GenBank and inverse&complement of Predicted nucleotide seq:")
+(length(which(inv_emboss == real[-1]))/length(real[-1])) *100
+```
+
+When RNA is done, the way the enzym copies a string of DNA is that it creates a string that is inverted and made of the complement nucleotides (compared to the original DNA string). The  _backtranseq_ function imitates the work of the enzym, hence the resulting sequence is actual the inverse of the original sequence, and with the complemented nucleotides subsistuted instead the actual ones. This is backed up by the percentage of the matching nucleotides between different sequence: the inverted and complemented predicted sequence is matching considerably better to the GenBank's sequence than both non-inverted (and complemented) sequences, and vice versa.
+
+### 2.5
+
+The nucleotide number range that corresponds to these amino acids is ´r length(emboss)´.
+Stop condons are TAA, TAG or TGA. We could not detect a stop condon:
+
+```{r}
+j = 1
+stop_co1 <-c("t","a","a")
+stop_co2 <-c("t","a","g")
+stop_co3 <-c("t","g","a")
+result <- c()
+i = 1
+while (j < 5661){
+  acid <- inv_emboss[j:(j+2)]
+  #print(acid)
+  if (isTRUE(acid == stop_co1) || isTRUE(acid ==stop_co2) || isTRUE(acid == stop_co3)){
+    result[i] <- j
+    i <- i+1
+  }
+  j= j+3
+}
+result
+```
+
+Given the information in GenBank, this protein sequence lies on the Chromosome 1.
+
+## Question 3
+
+### 3.1
+
+Caenorhabditis elegans is the first multicelar organism that had its' whole genome sequenced. As it is one of the simplest organisms with a nervous system, it is the only organism to have its connectome (neuronal "wiring diagram") completed.
