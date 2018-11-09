@@ -1,0 +1,185 @@
+---
+title: "732A51 Bioinformatics Lab1"
+author: "Fanny Karelius (fanka300)"
+date: "7 november 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Question 1
+
+#1.1
+
+$$p(A)=p, p(a)=q$$
+$$p(AA)=p\cdot p=p^2, p(aa)=q^2, p(Aa \text{ or } aA)=2\cdot pq$$
+Proportions in offspring population:
+$$p(A)=p^2+pq, p(a)=q^2+pq$$
+$$1=(p+q)^2=p^2+pq+q^2+pq$$
+Second generation:
+$$p(AA)=(p^2+pq)^2=p^4+2p^3q+p^2q^2=p^2(p^2+2pq+q^2)=p^2$$
+In the same way:
+$$p(aa)=(q^2+pq)^2=q^2$$
+$$p(Aa \text{ or } aA)=2(p^2+pq)(q^2+pq)=2(2p^2q^2+pq^3+p^3q)=2pq(p^2+2pq+q^2)=2pq$$
+The proportions of the second generation are the same as in the first generation. No, a population in Hardy-Weinberg equilibrium cannot deviate from it with random mating.
+
+##1.2
+
+```{r}
+MM <- 357
+MN <- 485
+NN <- 158
+
+p<-(MM+MN/2)/sum(MM+MN+NN)
+q<-(NN+MN/2)/sum(MM+MN+NN)
+
+chisq.test(c(MM,MN, NN), p = c(p^2, 2*p*q,q^2))
+```
+As our $p$-value is above 0.05 we cannot reject the null hypothesis (at 5% significance level) that the population is in Hardy-Weinberg equilibrium.
+
+# Question 2
+
+## 2.1
+
+According to the GenBank, the protein product is named "RecQ type DNA helicase".
+
+### Loading the data
+
+In this question we created Fasta files from the protein sequence from GenBank, corresponding nucleotides sequence. As well as, the best prediction of the nucleotide sequence, and the inverse and complements of the both nucleotide sequences.
+
+```{r,warning=FALSE}
+#install.packages("seqinr")
+library(seqinr)
+protein_seq <- read.fasta("D:/LiU/732A51/Bioinformatics_lab1/Fasta_file.fasta")
+EMBOSS_seq <- read.fasta("D:/LiU/732A51/Bioinformatics_lab1/backtranseq.txt")
+True_seq <-  read.fasta("D:/LiU/732A51/Bioinformatics_lab1/truenucleotideseq.txt")
+Reversed_True <- read.fasta("D:/LiU/732A51/Bioinformatics_lab1/Reversed_compl.txt")
+Reversed_Emboss <- read.fasta("D:/LiU/732A51/Bioinformatics_lab1/Reversed_compl_backtranseq.txt")
+emboss <- EMBOSS_seq$A
+real <- True_seq$`CU329670.1:1-5662`
+inv_real <- Reversed_True$`1-5662`
+inv_emboss <- Reversed_Emboss$A
+```
+
+## 2.2
+
+The first four amino acids are:
+
+```{r}
+protein_seq$`protein_id=CAC05745.1,product=RecQtypeDNAhelicase`[1:4]
+```
+
+The full names of them are: Methionine, Valine, Valine, Alanine.
+
+## 2.3, 2.4
+
+We can see that the length of the sequences do not match - the "true" nucleotide sequence from the GenBank has one additional nucleotide as the best predicted sequence by the _backtranseq_. 
+
+```{r}
+length(emboss)
+length(real)
+length(inv_real)
+length(inv_emboss)
+```
+
+Below we print out 10 first nucleotides of each sequence. We deduce that the "true" nucleotide sequence starts with an additional "g", which is omitted in the best prediction sequence:
+```{r,echo=FALSE}
+print("Predicted nucleotide seq:")
+emboss[1:10]
+print("GenBank nucleotide seq:")
+real[1:10]
+print("Inverse and complement of GenBank nucleotide seq:")
+inv_real[1:10]
+print("Inverse and complement of predicted nucleotide seq:")
+inv_emboss[1:10]
+```
+
+Below we compare the sequences, and find the percentage of the matching nucleotides:
+
+```{r,echo=FALSE}
+print("Comparison of the Predicted and GenBank nucleotide seq:")
+(length(which(emboss == real[-1]))/length(real[-1])) *100
+print("Comparison of the Predicted and inverse&complement of GenBank nucleotide seq:")
+(length(which(emboss == inv_real[-5662]))/length(real[-5662])) *100
+print("Comparison of the GenBank and inverse&complement of Predicted nucleotide seq:")
+(length(which(inv_emboss == real[-1]))/length(real[-1])) *100
+```
+
+When RNA is done, the way the enzyme copies a string of DNA is that it creates a string that is inverted and made of the complement nucleotides (compared to the original DNA string). The  _backtranseq_ function imitates the work of the enzyme, hence the resulting sequence is actual the inverse of the original sequence, and with the complemented nucleotides substituted instead the actual ones. This is backed up by the percentage of the matching nucleotides between different sequence: the inverted and complemented predicted sequence is matching considerably better to the GenBank's sequence than both non-inverted (and complemented) sequences, and vice versa.
+
+## 2.5
+
+The nucleotide number range that corresponds to these amino acids is `r length(emboss)`.
+Stop condons are TAA, TAG or TGA. We could not detect a stop condon:
+
+```{r}
+j = 1
+stop_co1 <-c("t","a","a")
+stop_co2 <-c("t","a","g")
+stop_co3 <-c("t","g","a")
+result <- c()
+i = 1
+while (j < 5661){
+  acid <- inv_emboss[j:(j+2)]
+  #print(acid)
+  if (isTRUE(acid == stop_co1) || isTRUE(acid ==stop_co2) || isTRUE(acid == stop_co3)){
+    result[i] <- j
+    i <- i+1
+  }
+  j= j+3
+}
+result
+```
+
+Given the information in GenBank, this protein sequence lies on the Chromosome 1.
+
+
+
+# Question 3
+
+
+##3.1
+
+C. elegans is a free-living transparent roundworm that lives in temperate soil environments. It is one of the simplest organisms with a nervous system and this makes it important for the scientific community because it is used as a model organism for research on neurological development in animals. It was the first multicellular organism to have its whole genome sequenced. The neurons of C. elegans are very similar to that of humans. 
+
+
+##3.2, 3.3
+
+Numbering of the sequences in the alignment: 6,529-8,028
+
+The query has the opposite direction of progress as the database genomic sequence. The reverse complement has the same direction as the database genomic sequence. 
+
+##3.4
+
+Chromosome 5. Gene: ife-3
+
+
+##3.5
+
+The translation of the whole file doesn't make any sense as the file contains all of the nucleotides, not just the exons. There are no starts, but several stops (\*). 
+
+```{r,echo=FALSE}
+wholefile_tr <- read.fasta("D:/LiU/732A51/Bioinformatics_lab1/wholefile_translation.FASTA")
+print(wholefile_tr)
+```
+
+With only the exons, we get a protein sequence with a start (M) and a stop (\*).
+
+```{r, echo=FALSE}
+exons_protein <- read.fasta("D:/LiU/732A51/Bioinformatics_lab1/exons_protein.FASTA")
+print(exons_protein)
+
+```
+
+
+##3.6
+
+ife-3 is the most similar to the human gene eIF4E. It is the only isoform required for viability. ife-3 is found in humans, chimpanzees, Rhesus monkeys, dogs, cows, mice, rats, chickens, zebrafish, fruit flies, mosquitoes, rice, and frogs.
+
+
+#Appendix
+
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
