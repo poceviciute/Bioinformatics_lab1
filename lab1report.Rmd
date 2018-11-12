@@ -111,8 +111,7 @@ When RNA is done, the way the enzyme copies a string of DNA is that it creates a
 
 ## 2.5
 
-The nucleotide number range that corresponds to these amino acids is `r length(emboss)`.
-Stop condons are TAA, TAG or TGA. We could not detect a stop condon:
+The nucleotide number range that corresponds to these amino acids is `r length(emboss)`. The reversed and complemented sequence starts with the starting M protein ("ATC" nucleotides), hence we chose this version and looked for the stop codan below. The stop condons are TAA, TAG or TGA. We could not detect a stop condon:
 
 ```{r}
 j = 1
