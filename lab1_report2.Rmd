@@ -1,0 +1,130 @@
+---
+title: "732A51 Bioinformatics Lab1"
+author: "rabnawaz and saman"
+date: "7 november 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Question 1
+
+#1.1
+
+__Initially__
+
+$$total~~population = 2N$$
+
+__Frequency of genome__
+
+$$f_1(a) = q , ~~~~~~~~~ f_1(A) = p , ~~~~~~~~~ f_1(p+q) = 1$$
+
+$$f_1(AA) = p^2 , ~~~~~~~~~ f_1(aa) = q^2 , ~~~~~~~~~ f_1(Aa) = 2pq$$
+
+__Proportions in offspring population:__
+
+$$(p+q)^2 = p^2+q^2+ 2pq = 1$$
+
+$$P(A) = f_1(AA) + \frac{1}{2}f_1(Aa)$$ 
+$$= p^2 + \frac{1}{2}(2pq) = p^2 + pq $$
+
+
+$$P(a) = f_1(aa) + \frac{1}{2}f_1(Aa)$$ 
+$$= q^2 + \frac{1}{2}(2pq) = q^2 + pq$$
+
+$$P(Aa~~or~~aA) = pq  + pq = 2pq$$
+Second generation:
+$$p(AA)=(p^2+pq)^2=p^4+2p^3q+p^2q^2=p^2(p^2+2pq+q^2)=p^2$$
+In the same way:
+$$p(aa)=(q^2+pq)^2=q^2$$
+$$p(Aa \text{ or } aA)=2(p^2+pq)(q^2+pq)=2(2p^2q^2+pq^3+p^3q)=2pq(p^2+2pq+q^2)=2pq$$
+The proportions of the second generation are the same as in the first generation. No, a population in Hardy-Weinberg equilibrium cannot deviate from it with random mating.
+
+##1.2
+
+```{r}
+MM <- 357
+MN <- 485
+NN <- 158
+
+p<-(MM+MN/2)/sum(MM+MN+NN)
+q<-(NN+MN/2)/sum(MM+MN+NN)
+
+chisq.test(c(MM,MN, NN), p = c(p^2, 2*p*q,q^2))
+```
+As our $p$-value is above 0.05 we cannot reject the null hypothesis (at 5% significance level) that the population is in Hardy-Weinberg equilibrium.
+
+# Question 3
+
+
+##3.1
+
+C. elegans is a free-living transparent roundworm that lives in temperate soil environments. It is one of the simplest organisms with a nervous system and this makes it important for the scientific community because it is used as a model organism for research on neurological development in animals. It was the first multicellular organism to have its whole genome sequenced. The neurons of C. elegans are very similar to that of humans thats why the developmental and genetical experiments that are not possible to directly implement on human or are very time consuming and costly to implement on humans, C. elegans are used instead.
+
+
+##3.2, 3.3
+
+__Numbering of the sequences in the alignment:__
+
+- query seq = 1 - 1500
+- subject sequence = 6529 - 8028
+
+The direction of query sequence is opposite to database sequence.
+
+__Reverse Numbering of the sequences in the alignment:__
+
+- query seq = 1 - 1500
+- subject sequence = 8028 - 6529 
+
+The direction of query sequence is same to database sequence.
+
+##3.4
+
+Chromosome 5. Gene: ife-3
+
+
+##3.5
+```{r}
+library(seqinr)
+complete_seq <- read.fasta(file = "files/allseq_6936to7818.FASTA")
+
+e1 <- complete_seq$`NC_003283.11:6936-7818`[1:174]
+e2 <- complete_seq$`NC_003283.11:6936-7818`[(174+48):(174+48+235)]
+e3 <- complete_seq$`NC_003283.11:6936-7818`[(457+40):(457+40+176)]
+e4 <- complete_seq$`NC_003283.11:6936-7818`[(673+42):(673+42+168)]
+
+```
+
+
+
+__Exons translation__
+
+```{r}
+
+proteins_from_exons <- read.fasta(file = "files/exons_translation.FASTA")
+print(proteins_from_exons)
+
+```
+
+
+__Complete Sequence translation__
+
+```{r}
+
+proteins_from_6936to7818 <- read.fasta(file = "files/complete_translationq3.FASTA")
+print(proteins_from_6936to7818)
+
+```
+
+
+Some parts of protein translation obtained from exons matches to the protein translation of the entire sequence. The protein sequence obtained from the complete sequence has a number of stop codes, the translation is quite vague as at some places the sequence stops as soon as it starts or start protein occurs again multiple times without before stop.
+
+
+##3.6
+
+Eukaryotic translation initiation factor EIF4E family protein recognizes and binds the 7-methylguanosine-containing mRNA cap during an early step in the initiation of protein synthesis 
+
+It has 4 exons.
+
