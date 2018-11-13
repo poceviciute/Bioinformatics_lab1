@@ -2,7 +2,7 @@
 title: "732A51 Bioinformatics Lab1"
 author: "Fanny Karelius (fanka300)"
 date: "7 november 2018"
-output: pdf_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -107,11 +107,12 @@ print("Comparison of the GenBank and inverse&complement of Predicted nucleotide 
 (length(which(inv_emboss == real[-1]))/length(real[-1])) *100
 ```
 
-When RNA is done, the way the enzyme copies a string of DNA is that it creates a string that is inverted and made of the complement nucleotides (compared to the original DNA string). The  _backtranseq_ function imitates the work of the enzyme, hence the resulting sequence is actual the inverse of the original sequence, and with the complemented nucleotides substituted instead the actual ones. This is backed up by the percentage of the matching nucleotides between different sequence: the inverted and complemented predicted sequence is matching considerably better to the GenBank's sequence than both non-inverted (and complemented) sequences, and vice versa.
+
+When RNA is done, the way the enzyme copies a string of DNA is that it creates a string that is inverted and made of the complement nucleotides (compared to the original DNA string). The  _backtranseq_ function imitates the work of the enzyme, hence the resulting sequence is actual the inverse of the original sequence, and with the complemented nucleotides substituted instead the actual ones. Therefore, the inverted and complemented predicted sequence is matching considerably better to the GenBank's sequence than both non-inverted (and complemented) sequences, and vice versa. However, the match is not 100%. This may be due to that the predicted sequence is derived from the amino acids sequence by the provided website. As some of the acids can potentially be composed of the nucleotides in a few different ways, it is reasonable that the resulting nucleodtide sequence can potentially differ a little bit from the "real" one provided at the GenBank.
 
 ## 2.5
 
-The nucleotide number range that corresponds to these amino acids is `r length(emboss)`. The reversed and complemented sequence starts with the starting M protein ("ATC" nucleotides), hence we chose this version and looked for the stop codan below. The stop condons are TAA, TAG or TGA. We could not detect a stop condon:
+The nucleotide number range that corresponds to these amino acids is `r length(emboss)`. The reversed and complemented sequence starts with the starting M protein ("ATC" nucleotides), hence we chose this version and looked for the stop codan below. The stop condons are TAA, TAG or TGA. We found several stop codons, but the first one is at location 19:
 
 ```{r}
 j = 1
@@ -120,16 +121,18 @@ stop_co2 <-c("t","a","g")
 stop_co3 <-c("t","g","a")
 result <- c()
 i = 1
-while (j < 5661){
+while (j < 5661){ 
   acid <- inv_emboss[j:(j+2)]
   #print(acid)
-  if (isTRUE(acid == stop_co1) || isTRUE(acid ==stop_co2) || isTRUE(acid == stop_co3)){
+  if (all(acid == stop_co1) || all(acid ==stop_co2) || all(acid == stop_co3)){
     result[i] <- j
     i <- i+1
   }
   j= j+3
 }
-result
+stop_loc <- result[1]
+stop_loc
+inv_emboss[stop_loc:(stop_loc+2)]
 ```
 
 Given the information in GenBank, this protein sequence lies on the Chromosome 1.
