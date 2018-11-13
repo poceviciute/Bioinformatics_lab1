@@ -68,17 +68,17 @@ C. elegans is a free-living transparent roundworm that lives in temperate soil e
 
 __Numbering of the sequences in the alignment:__
 
-- query seq = 1 - 1500
+- query sequence = 1 - 1500
 - subject sequence = 6529 - 8028
 
-The direction of query sequence is opposite to database sequence.
+The direction of database sequence is opposite to query sequence.
 
 __Reverse Numbering of the sequences in the alignment:__
 
 - query seq = 1 - 1500
 - subject sequence = 8028 - 6529 
 
-The direction of query sequence is same to database sequence.
+The direction of database sequence is same as query sequence.
 
 ##3.4
 
@@ -86,6 +86,7 @@ Chromosome 5. Gene: ife-3
 
 
 ##3.5
+Extracting exons
 ```{r}
 library(seqinr)
 complete_seq <- read.fasta(file = "files/allseq_6936to7818.FASTA")
@@ -99,7 +100,7 @@ e4 <- complete_seq$`NC_003283.11:6936-7818`[(673+42):(673+42+168)]
 
 
 
-__Exons translation__
+__Exon translation__
 
 ```{r}
 
@@ -119,12 +120,11 @@ print(proteins_from_6936to7818)
 ```
 
 
-Some parts of protein translation obtained from exons matches to the protein translation of the entire sequence. The protein sequence obtained from the complete sequence has a number of stop codes, the translation is quite vague as at some places the sequence stops as soon as it starts or start protein occurs again multiple times without before stop.
+Some parts of protein translation obtained from exons matches to the protein translation of the entire sequence. The protein sequence obtained from the complete sequence has a number of stop codes, the translation is quite vague as at some places the sequence stops as soon as it starts or start protein occurs again multiple times before stop.
 
 
 ##3.6
 
-Eukaryotic translation initiation factor EIF4E family protein recognizes and binds the 7-methylguanosine-containing mRNA cap during an early step in the initiation of protein synthesis 
+ife-3 is the Eukaryotic translation initiation factor that is used in early steps of protein synthesis to provide stability. It is most similar to the human gene eIF4E. It is the only isoform required for viability. ife-3 is found in humans, chimpanzees, Rhesus monkeys, dogs, cows, mice, rats, chickens, zebrafish, fruit flies, mosquitoes, rice, and frogs. 
 
-It has 4 exons.
-
+There are 3 isoforms of the given sequence and 4 exons are formed.
