@@ -1,6 +1,6 @@
 ---
 title: "732A51 Bioinformatics Lab1"
-author: "rabnawaz and saman"
+author: "Milda Poceviciute, Fanny Karelius, Rab Nawaz Jan Sher and Saman Zahid"
 date: "7 november 2018"
 output: pdf_document
 ---
@@ -56,12 +56,111 @@ chisq.test(c(MM,MN, NN), p = c(p^2, 2*p*q,q^2))
 ```
 As our $p$-value is above 0.05 we cannot reject the null hypothesis (at 5% significance level) that the population is in Hardy-Weinberg equilibrium.
 
+# Question 2
+
+## 2.1
+
+According to the GenBank, the protein product is named "RecQ type DNA helicase".
+
+### Loading the data
+
+In this question we created Fasta files from the protein sequence from GenBank, corresponding nucleotides sequence. As well as, the best prediction of the nucleotide sequence, and the inverse and complements of the both nucleotide sequences.
+
+```{r,warning=FALSE}
+#install.packages("seqinr")
+library(seqinr)
+protein_seq <- read.fasta("Fasta_file.fasta")
+EMBOSS_seq <- read.fasta("backtranseq.txt")
+True_seq <-  read.fasta("truenucleotideseq.txt")
+Reversed_True <- read.fasta("Reversed_compl.txt")
+Reversed_Emboss <- read.fasta("Reversed_compl_backtranseq.txt")
+emboss <- EMBOSS_seq$A
+real <- True_seq$`CU329670.1:1-5662`
+inv_real <- Reversed_True$`1-5662`
+inv_emboss <- Reversed_Emboss$A
+```
+
+## 2.2
+
+The first four amino acids are:
+
+```{r}
+protein_seq$`protein_id=CAC05745.1,product=RecQtypeDNAhelicase`[1:4]
+```
+
+The full names of them are: Methionine, Valine, Valine, Alanine.
+
+## 2.3, 2.4
+
+We can see that the length of the sequences do not match - the "true" nucleotide sequence from the GenBank has one additional nucleotide as the best predicted sequence by the _backtranseq_. 
+
+```{r}
+length(emboss)
+length(real)
+length(inv_real)
+length(inv_emboss)
+```
+
+Below we print out 10 first nucleotides of each sequence. We deduce that the "true" nucleotide sequence starts with an additional "g", which is omitted in the best prediction sequence:
+```{r,echo=FALSE}
+print("Predicted nucleotide seq:")
+emboss[1:10]
+print("GenBank nucleotide seq:")
+real[1:10]
+print("Inverse and complement of GenBank nucleotide seq:")
+inv_real[1:10]
+print("Inverse and complement of predicted nucleotide seq:")
+inv_emboss[1:10]
+```
+
+Below we compare the sequences, and find the percentage of the matching nucleotides:
+
+```{r,echo=FALSE}
+print("Comparison of the Predicted and GenBank nucleotide seq:")
+(length(which(emboss == real[-1]))/length(real[-1])) *100
+print("Comparison of the Predicted and inverse&complement of GenBank nucleotide seq:")
+(length(which(emboss == inv_real[-5662]))/length(real[-5662])) *100
+print("Comparison of the GenBank and inverse&complement of Predicted nucleotide seq:")
+(length(which(inv_emboss == real[-1]))/length(real[-1])) *100
+```
+
+
+When RNA is done, the way the enzyme copies a string of DNA is that it creates a string that is inverted and made of the complement nucleotides (compared to the original DNA string). The  _backtranseq_ function imitates the work of the enzyme, hence the resulting sequence is actual the inverse of the original sequence, and with the complemented nucleotides substituted instead the actual ones. Therefore, the inverted and complemented predicted sequence is matching considerably better to the GenBank's sequence than both non-inverted (and complemented) sequences, and vice versa. However, the match is not 100%. This may be due to that the predicted sequence is derived from the amino acids sequence by the provided website. As some of the acids can potentially be composed of the nucleotides in a few different ways, it is reasonable that the resulting nucleotide sequence can potentially differ a little bit from the "real" one provided at the GenBank.
+
+## 2.5
+
+The nucleotide number range that corresponds to these amino acids is `r length(emboss)`. The reversed and complemented sequence starts with the starting M protein ("ATC" nucleotides), hence we chose this version and looked for the stop codan below. The stop condons are TAA, TAG or TGA. We found several stop codons, but the first one is at location 19:
+
+```{r}
+j = 1
+stop_co1 <-c("t","a","a")
+stop_co2 <-c("t","a","g")
+stop_co3 <-c("t","g","a")
+result <- c()
+i = 1
+while (j < 5661){ 
+  acid <- inv_emboss[j:(j+2)]
+  #print(acid)
+  if (all(acid == stop_co1) || all(acid ==stop_co2) || all(acid == stop_co3)){
+    result[i] <- j
+    i <- i+1
+  }
+  j= j+3
+}
+stop_loc <- result[1]
+stop_loc
+inv_emboss[stop_loc:(stop_loc+2)]
+```
+
+Given the information in GenBank, this protein sequence lies on the Chromosome 1.
+
+
 # Question 3
 
 
 ##3.1
 
-C. elegans is a free-living transparent roundworm that lives in temperate soil environments. It is one of the simplest organisms with a nervous system and this makes it important for the scientific community because it is used as a model organism for research on neurological development in animals. It was the first multicellular organism to have its whole genome sequenced. The neurons of C. elegans are very similar to that of humans thats why the developmental and genetical experiments that are not possible to directly implement on human or are very time consuming and costly to implement on humans, C. elegans are used instead.
+C. elegans is a free-living transparent roundworm that lives in temperate soil environments. It is one of the simplest organisms with a nervous system and this makes it important for the scientific community because it is used as a model organism for research on neurological development in animals. It was the first multicellular organism to have its whole genome sequenced. The neurons of C. elegans are very similar to that of humans thats why the developmental and genetic experiments that are not possible to directly implement on human or are very time consuming and costly to implement on humans, C. elegans are used instead.
 
 
 ##3.2, 3.3
