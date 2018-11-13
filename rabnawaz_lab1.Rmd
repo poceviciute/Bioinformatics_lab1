@@ -1,0 +1,77 @@
+---
+title: "Rabnawaz_lab1"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1:  Hardy–Weinberg equilibrium
+## part 1.1
+
+__Initially__
+
+$$total~~population = 2N$$
+
+__Frequency of genome__
+
+$$f_1(a) = q , ~~~~~~~~~ f_1(A) = p , ~~~~~~~~~ f_1(p+q) = 1$$
+
+$$f_1(AA) = p^2 , ~~~~~~~~~ f_1(aa) = q^2 , ~~~~~~~~~ f_1(Aa) = 2pq$$
+
+__Proportions in offspring population:__
+
+$$(p+q)^2 = p^2+q^2+ 2pq = 1$$
+
+$$P(A) = f_1(AA) + \frac{1}{2}f_1(Aa)$$ 
+$$= p^2 + \frac{1}{2}(2pq) = p^2 + pq $$
+
+
+$$P(a) = f_1(aa) + \frac{1}{2}f_1(Aa)$$ 
+$$= q^2 + \frac{1}{2}(2pq) = q^2 + pq$$
+
+$$P(Aa~~or~~aA) = pq  + pq = 2pq$$
+
+
+__For Second generation:__
+
+$$p(AA)=(p^2+pq)^2=p^4+2p^3q+p^2q^2=p^2(p^2+2pq+q^2)=p^2$$
+In the same way:
+
+$$p(aa)=(q^2+pq)^2=q^2$$
+$$p(Aa \text{ or } aA)=2(p^2+pq)(q^2+pq)=2(2p^2q^2+pq^3+p^3q)=2pq(p^2+2pq+q^2)=2pq$$
+
+
+The proportions of the second generation are the same as in the first generation. No, a population in Hardy-Weinberg equilibrium cannot deviate from it with random mating.
+
+
+## part 1.2
+```{r}
+
+#Observed Count
+MM <- 357
+MN <- 485
+NN <- 158
+
+#proportion count 
+p<-(MM+(1/2 * MN)) / sum( MM + MN + NN)
+q<-(NN+(1/2 * MN)) / sum( MM + MN + NN)
+
+r = chisq.test(c(MM,MN, NN), p = c(p^2, 2*p*q,q^2))
+
+r
+```
+
+$Pvalue$ is greater than 0.05 so population is in Hardy–Weinberg equilibrium.
+
+
+
+
+#Question 3
+
+#part 1
+Caenorhabditis elegans is the first multi-cellular organism that had its whole genome sequenced and its has similar feature or characteristic as human.It is such an important organism , as many developmental and genetical experiments are directly not possible to implement on human and they are very time consuming and costly. So we can use that organ to do significant experiment in lab by 
+Scientific community.
+
+
